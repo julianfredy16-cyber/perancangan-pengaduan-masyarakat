@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIPEMMAS - Kantor Kecamatan Binangun</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                            900: '#172554',
+                        },
+                        secondary: {
+                            500: '#10b981',
+                            600: '#059669',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .step-active {
+            border-color: #1d4ed8;
+            background-color: #1d4ed8;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="sticky top-0 z-40 bg-primary-900 text-white shadow-lg border-b border-primary-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Brand / Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="bg-gradient-to-tr from-yellow-400 to-amber-500 p-2.5 rounded-xl shadow-md flex items-center justify-center">
+                        <i class="fa-solid me-0 fa-landmark text-primary-900 text-2xl"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-lg tracking-tight text-white">SIPEMMAS</span>
+                            <span class="bg-amber-400/20 text-amber-300 text-xs px-2 py-0.5 rounded border border-amber-400/30 font-medium">KEC. BINANGUN</span>
+                        </div>
+                        <p class="text-xs text-slate-300">Sistem Pengaduan & Monitoring Status Berbasis Web</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Nav Links -->
+                <nav class="hidden md:flex items-center gap-1 lg:gap-2 text-sm font-medium">
+                    <a href="#beranda" class="px-3 py-2 rounded-lg hover:bg-primary-800 text-slate-100 hover:text-white transition">Beranda</a>
+                    <a href="#buat-pengaduan" class="px-3 py-2 rounded-lg hover:bg-primary-800 text-slate-100 hover:text-white transition">Buat Pengaduan</a>
+                    <a href="#lacak" class="px-3 py-2 rounded-lg hover:bg-primary-800 text-slate-100 hover:text-white transition">Lacak Pengaduan</a>
+                    <a href="#statistik" class="px-3 py-2 rounded-lg hover:bg-primary-800 text-slate-100 hover:text-white transition">Statistik Desa</a>
+                    <a href="#daftar-desa" class="px-3 py-2 rounded-lg hover:bg-primary-800 text-slate-100 hover:text-white transition">Wilayah Desa</a>
+                </nav>
+
+                <!-- Action Button / Officer Portal Toggle -->
+                <div class="hidden md:flex items-center gap-3">
+                    <button onclick="openOfficerModal()" class="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold text-xs px-4 py-2.5 rounded-lg shadow transition">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <span>Portal Petugas</span>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center gap-2">
+                    <button onclick="toggleMobileMenu()" class="text-slate-200 hover:text-white p-2 rounded-lg focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-primary-900 border-t border-primary-800 px-4 pt-2 pb-4 space-y-1">
+            <a href="#beranda" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-primary-800">Beranda</a>
+            <a href="#buat-pengaduan" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-primary-800">Buat Pengaduan</a>
+            <a href="#lacak" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-primary-800">Lacak Pengaduan</a>
+            <a href="#statistik" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-primary-800">Statistik Desa</a>
+            <a href="#daftar-desa" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-primary-800">Wilayah Desa</a>
+            <button onclick="openOfficerModal(); toggleMobileMenu();" class="w-full text-left mt-2 flex items-center gap-2 bg-amber-500 text-slate-900 font-semibold text-sm px-3 py-2.5 rounded-lg">
+                <i class="fa-solid fa-user-shield"></i>
+                <span>Portal Petugas Kecamatan</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- HERO SECTION -->
+        <section id="beranda" class="relative bg-gradient-to-b from-primary-900 via-primary-800 to-slate-900 text-white py-16 lg:py-24 overflow-hidden">
+            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid lg:grid-cols-12 gap-12 items-center">
+                    <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                        <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 text-xs font-medium text-amber-300">
+                            <i class="fa-solid fa-bullhorn text-amber-400"></i>
+                            <span>Pelayanan Aspirasi & Pengaduan Terpadu</span>
+                        </div>
+                        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+                            Layanan Pengaduan Masyarakat <br class="hidden sm:inline">
+                            <span class="text-amber-400">Kecamatan Binangun</span>
+                        </h1>
+                        <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                            Wadah resmi bagi seluruh warga 17 Desa di Wilayah Kecamatan Binangun untuk menyampaikan aspirasi, keluhan, dan laporan pembangunan demi pelayanan publik yang transparan dan akuntabel.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
+                            <a href="#buat-pengaduan" class="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-6 py-3.5 rounded-xl shadow-lg transition transform hover:-translate-y-0.5">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                                <span>Buat Pengaduan Sekarang</span>
+                            </a>
+                            <a href="#lacak" class="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3.5 rounded-xl border border-white/20 transition">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <span>Lacak Status Tiket</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats Card Grid -->
+                    <div class="lg:col-span-5">
+                        <div class="glass-card rounded-2xl p-6 shadow-2xl border border-white/20 text-slate-800 space-y-4">
+                            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-chart-line text-primary-600"></i>
+                                    Ringkasan Pengaduan
+                                </h3>
+                                <span class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-2.5 py-0.5 rounded-full">Real-time</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                    <span class="text-xs font-medium text-slate-500 block">Total Pengaduan</span>
+                                    <span id="heroTotalCount" class="text-2xl font-black text-primary-800">0</span>
+                                    <span class="text-[10px] text-slate-400 block mt-1">Laporan masuk</span>
+                                </div>
+                                <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
+                                    <span class="text-xs font-medium text-amber-700 block">Dalam Proses</span>
+                                    <span id="heroPendingCount" class="text-2xl font-black text-amber-600">0</span>
+                                    <span class="text-[10px] text-amber-600/70 block mt-1">Ditindaklanjuti</span>
+                                </div>
+                                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                                    <span class="text-xs font-medium text-emerald-700 block">Selesai Ditangani</span>
+                                    <span id="heroDoneCount" class="text-2xl font-black text-emerald-600">0</span>
+                                    <span class="text-[10px] text-emerald-600/70 block mt-1">Tuntas diselesaikan</span>
+                                </div>
+                                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                                    <span class="text-xs font-medium text-blue-700 block">Wilayah Desa</span>
+                                    <span class="text-2xl font-black text-blue-800">17</span>
+                                    <span class="text-[10px] text-blue-600/70 block mt-1">Desa terintegrasi</span>
+                                </div>
+                            </div>
+                            <div class="pt-2 text-center text-xs text-slate-500">
+                                <i class="fa-solid fa-shield-halved text-primary-600 mr-1"></i> Data terlindungi & ditangani langsung oleh Kantor Kecamatan Binangun
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- WORKFLOW SECTION -->
+        <section class="py-12 bg-white border-b border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-10">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-primary-600 mb-1">Alur Penanganan Laporan</h2>
+                    <p class="text-2xl font-bold text-slate-900">Bagaimana Sistem Pengaduan Bekerja?</p>
+                </div>
+                <div class="grid md:grid-cols-4 gap-6">
+                    <div class="p-5 rounded-xl bg-slate-50 border border-slate-100 text-center relative">
+                        <div class="w-12 h-12 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center font-bold text-lg mx-auto mb-3">1</div>
+                        <h4 class="font-bold text-slate-900 text-sm mb-1">Tulis Laporan</h4>
+                        <p class="text-xs text-slate-600">Isi form pengaduan lengkap dengan memilih lokasi Desa dan bukti pendukung.</p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-slate-50 border border-slate-100 text-center relative">
+                        <div class="w-12 h-12 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center font-bold text-lg mx-auto mb-3">2</div>
+                        <h4 class="font-bold text-slate-900 text-sm mb-1">Verifikasi Petugas</h4>
+                        <p class="text-xs text-slate-600">Tim Kecamatan memverifikasi kelengkapan identitas dan keabsahan aduan.</p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-slate-50 border border-slate-100 text-center relative">
+                        <div class="w-12 h-12 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center font-bold text-lg mx-auto mb-3">3</div>
+                        <h4 class="font-bold text-slate-900 text-sm mb-1">Tindak Lanjut Lapangan</h4>
+                        <p class="text-xs text-slate-600">Koordinasi dengan pihak Desa/Dinas terkait untuk penanganan di lapangan.</p>
+                    </div>
+                    <div class="p-5 rounded-xl bg-slate-50 border border-slate-100 text-center relative">
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center font-bold text-lg mx-auto mb-3"><i class="fa-solid fa-check"></i></div>
+                        <h4 class="font-bold text-slate-900 text-sm mb-1">Selesai & Feedback</h4>
+                        <p class="text-xs text-slate-600">Pelapor menerima update tanggapan resmi dan hasil penanganan aduan.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FORM PENGADUAN SECTION -->
+        <section id="buat-pengaduan" class="py-16 bg-slate-100">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                    <div class="bg-gradient-to-r from-primary-800 to-primary-900 px-6 py-6 text-white">
+                        <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-file-signature text-amber-400"></i>
+                            Form Formulir Pengaduan Masyarakat
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-300 mt-1">Silakan isi data dengan valid. Rahasia identitas Anda terjamin sesuai ketentuan yang berlaku.</p>
+                    </div>
+
+                    <form id="complaintForm" onsubmit="handleFormSubmit(event)" class="p-6 sm:p-8 space-y-6">
+                        <!-- Data Pelapor -->
+                        <div>
+                            <h3 class="text-sm font-bold uppercase tracking-wider text-primary-800 border-b pb-2 mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-id-card text-slate-400"></i> Data Identitas Pelapor
+                            </h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Lengkap Pelapor *</label>
+                                    <input type="text" id="reporterName" required placeholder="Contoh: Budi Santoso" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 text-sm outline-none transition">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">NIK (Nomor Induk Kependudukan) *</label>
+                                    <input type="text" id="reporterNik" required pattern="[0-9]{16}" placeholder="16 digit angka KTP" maxlength="16" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 text-sm outline-none transition">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nomor WhatsApp / Telepon *</label>
+                                    <input type="tel" id="reporterPhone" required placeholder="08xxxxxxxxxx" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 text-sm outline-none transition">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Asal Desa (Wilayah Kecamatan Binangun) *</label>
+                                    <select id="reporterVillage" required class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 text-sm outline-none transition bg-white">
+                                        <option value="" disabled selected>-- Pilih Desa --</option>
+                                        <!-- 17 Desa items populated dynamically or statically -->
+                                        <option value="Alangamba">Desa Alangamba</option>
+                                        <option value="Bangkal">Desa Bangkal</option>
+                                        <option value="Binangun">Desa Binangun</option>
+                                        <option value="Jati">Desa Jati</option>
+                                        <option value="Jepara Kulon">Desa Jepara Kulon</option>
+                                        <option value="Jepara Wetan">Desa Jepara Wetan</option>
+                                        <option value="Karangnangka">Desa Karangnangka</option>
+                                        <option value="Kemojing">Desa Kemojing</option>
+                                        <option value="Kepudang">Desa Kepudang</option>
+                                        <option value="Pagubugan">Desa Pagubugan</option>
+                                        <option value="Pagubugan Kulon">Desa Pagubugan Kulon</option>
+                                        <option value="Pasuruhan">Desa Pasuruhan</option>
+                                        <option value="Pesawahan">Desa Pesawahan</option>
+                                        <option value="Sidaurip">Desa Sidaurip</option>
+                                        <option value="Sidayu">Desa Sidayu</option>
+                                        <option value="Widarapayung Kulon">Desa Widarapayung Kulon</option>
+                                        <option value="Widarapayung Wetan">Desa Widarapayung Wetan</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detail Pengaduan -->
+                        <div>
+                            <h3 class="text-sm font-bold uppercase tracking-wider text-primary-800 border-b pb-2 mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-clipboard-list text-slate-400"></i> Detail Laporan Pengaduan
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-700 mb-1">Kategori Pengaduan *</label>
+                                        <select id="complaintCategory" required class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 text-sm outline-none transition bg-white">
+                                            <option value="" disabled selected>-- Pilih Kategori --</option>
+                                            <option value="Infrastruktur & Jalan">Infrastruktur & Jalan</option>
+                                            <option value="Pelayanan Publik Desa">Pelayanan Publik Desa</option>
+                                            <option value="Kebersihan & Lingkungan">Kebersihan & Lingkungan</option>
+                                            <option value="Bantuan Sosial & Ekonomi">Bantuan Sosial & Ekonomi</option>
+                                            <option value="Keamanan & Ketertiban">Keamanan & Ketertiban</option>
+                                            <option value="Kesehatan & Fasilitas">Kesehatan & Fasilitas</option>
+                                            <option value="Lainnya">Lainnya</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-700 mb-1">Tingkat Urgensi</label>
+                                        <select id="complaintPriority" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 text-sm outline-none transition bg-white">
+                                            <option value="Biasa">Biasa (Standar Penanganan 3-5 Hari)</option>
+                                            <option value="Sedang">Penting (Butuh Penanganan 1-2 Hari)</option>
+                                            <option value="Darurat">Mendesak / Darurat</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Judul Ringkas Pengaduan *</label>
+                                    <input type="text" id="complaintTitle" required placeholder="Contoh: Kerusakan Lampu Penerangan Jalan Utama Desa Widarapayung Wetan" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 text-sm outline-none transition">
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Deskripsi Lengkap Permasalahan *</label>
+                                    <textarea id="complaintDetail" rows="4" required placeholder="Jelaskan kronologi, lokasi pasti (RT/RW/Dusun), dan uraian masalah secara rinci..." class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-600 focus:border-primary-600 text-sm outline-none transition"></textarea>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Unggah Lampiran Bukti Foto (Opsional)</label>
+                                    <div class="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center hover:bg-slate-50 transition cursor-pointer" onclick="document.getElementById('complaintFile').click()">
+                                        <input type="file" id="complaintFile" accept="image/*" class="hidden" onchange="previewFile(event)">
+                                        <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-400 mb-1"></i>
+                                        <p class="text-xs text-slate-600 font-medium">Klik untuk memilih foto / dokumen pendukung</p>
+                                        <p class="text-[10px] text-slate-400">Format: JPG, PNG (Maks 5MB)</p>
+                                        <div id="filePreview" class="hidden mt-2 text-xs font-semibold text-primary-700 bg-primary-50 py-1 px-3 rounded inline-block"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Checkbox Persetujuan -->
+                        <div class="flex items-start gap-2 pt-2">
+                            <input type="checkbox" id="agreeTerms" required class="mt-1 rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+                            <label for="agreeTerms" class="text-xs text-slate-600 leading-tight">
+                                Saya menyatakan bahwa seluruh informasi yang disampaikan adalah benar dan bertanggung jawab atas laporan yang disampaikan.
+                            </label>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="w-full bg-primary-800 hover:bg-primary-900 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-paper-plane"></i>
+                                <span>Kirim Pengaduan Ke Kecamatan</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- LACAK / MONITORING STATUS SECTION -->
+        <section id="lacak" class="py-16 bg-white border-y border-slate-200">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-10">
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">Fitur Transparansi Status</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mt-2">Monitoring Status Pengaduan</h2>
+                    <p class="text-slate-600 text-sm mt-1">Masukkan Nomor Tiket Pengaduan atau NIK Pelapor untuk memeriksa proses perkembangan laporan Anda.</p>
+                </div>
+
+                <!-- Search Input Card -->
+                <div class="bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm max-w-2xl mx-auto mb-8">
+                    <form onsubmit="searchComplaint(event)" class="flex flex-col sm:flex-row gap-3">
+                        <div class="relative flex-grow">
+                            <i class="fa-solid fa-ticket absolute left-3.5 top-3.5 text-slate-400"></i>
+                            <input type="text" id="trackSearchInput" required placeholder="Masukkan Nomor Tiket (cth: BNG-2026-001) atau NIK" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-primary-600 focus:border-primary-600 outline-none transition">
+                        </div>
+                        <button type="submit" class="bg-primary-800 hover:bg-primary-900 text-white font-bold px-6 py-3 rounded-xl shadow text-sm transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <span>Cari Tiket</span>
+                        </button>
+                    </form>
+                    <p class="text-[11px] text-slate-500 mt-2 text-center">
+                        <i class="fa-solid fa-circle-info text-blue-500 mr-1"></i> Tip: Anda juga dapat mengeklik tombol lacak pada daftar pengaduan publik terbaru di bawah.
+                    </p>
+                </div>
+
+                <!-- Search Results Display Box -->
+                <div id="trackResultContainer" class="hidden">
+                    <!-- Dynamic details will be injected here via JS -->
+                </div>
+
+                <!-- Recent Public Complaints Feed -->
+                <div class="mt-12">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-primary-700"></i>
+                            Daftar Pengaduan Terbaru Terpublikasi
+                        </h3>
+                        <span class="text-xs text-slate-500">Menampilkan pengaduan terkini di Kec. Binangun</span>
+                    </div>
+
+                    <div id="publicComplaintsList" class="space-y-4">
+                        <!-- Dynamic list items -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STATISTIK DESA SECTION -->
+        <section id="statistik" class="py-16 bg-slate-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="text-xs font-bold uppercase tracking-wider text-primary-700">Analisis Data Wilayah</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mt-1">Statistik Pengaduan Per Desa</h2>
+                    <p class="text-slate-600 text-sm mt-1">Sistem informasi pengaduan masyarakat pada 17 Desa di Kecamatan Binangun</p>
+                </div>
+
+                <div class="grid lg:grid-cols-12 gap-8">
+                    <!-- Chart Column -->
+                    <div class="lg:col-span-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-column text-primary-600"></i>
+                            Grafik Volume Pengaduan per Desa
+                        </h3>
+                        <div class="h-80 relative">
+                            <canvas id="villageChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Category Breakdown Column -->
+                    <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-chart-pie text-amber-500"></i>
+                                Distributif Kategori
+                            </h3>
+                            <div class="h-56 relative">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-100 text-xs text-slate-500 space-y-2">
+                            <div class="flex justify-between">
+                                <span>Desa Paling Aktif:</span>
+                                <span class="font-bold text-primary-800" id="topActiveVillage">Widarapayung Wetan</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Rata-Rata Respon Petugas:</span>
+                                <span class="font-bold text-emerald-600">1x24 Jam</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DAFTAR 17 DESA KECAMATAN BINANGUN -->
+        <section id="daftar-desa" class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-primary-600">Cakupan Wilayah Administrative</span>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mt-1">17 Desa di Kecamatan Binangun</h2>
+                        <p class="text-slate-600 text-sm">Pilih desa untuk menyaring pengaduan spesifik di wilayah tersebut.</p>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <span class="inline-flex items-center gap-2 bg-primary-50 text-primary-800 px-3 py-1.5 rounded-lg border border-primary-200 text-xs font-semibold">
+                            <i class="fa-solid fa-map-location-dot"></i> Total 17 Desa Terdaftar
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Grid of 17 Villages -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3" id="villagesGrid">
+                    <!-- Dynamic rendering via JS -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-primary-950 text-slate-300 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div class="md:col-span-2 space-y-3">
+                    <div class="flex items-center gap-2 text-white font-bold text-lg">
+                        <i class="fa-solid fa-landmark text-amber-400"></i>
+                        <span>Kantor Kecamatan Binangun</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed max-w-md">
+                        Sistem Informasi Pengaduan Masyarakat dan Monitoring Status Pengaduan Berbasis Web diciptakan untuk mempermudah koordinasi layanan publik, infrastruktur, dan kemasyarakatan di Kecamatan Binangun.
+                    </p>
+                    <p class="text-xs text-slate-400">
+                         Kabupaten Cilacap, Provinsi Jawa Tengah, Indonesia.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold text-sm mb-3 border-b border-slate-800 pb-2">Navigasi Ringkas</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#beranda" class="hover:text-amber-400 transition">Beranda Utama</a></li>
+                        <li><a href="#buat-pengaduan" class="hover:text-amber-400 transition">Formulir Pengaduan</a></li>
+                        <li><a href="#lacak" class="hover:text-amber-400 transition">Monitoring Status Tiket</a></li>
+                        <li><a href="#statistik" class="hover:text-amber-400 transition">Grafik Pengaduan Desa</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold text-sm mb-3 border-b border-slate-800 pb-2">Kontak Pelayanan</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-phone text-amber-400"></i>
+                            <span>(0282) Kantor Kecamatan</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-envelope text-amber-400"></i>
+                            <span>kecamatan.binangun@cilacapkab.go.id</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-clock text-amber-400"></i>
+                            <span>Senin - Jumat: 08.00 - 15.30 WIB</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pt-8 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-2">
+                <p>&copy; 2026 Perancangan Sistem Informasi Pengaduan Kantor Kecamatan Binangun.</p>
+                <p>Dilengkapi Aksesibilitas 17 Desa Terpadu</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL 1: TIKET SUCESS MODAL -->
+    <div id="ticketSuccessModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 text-center shadow-2xl space-y-4 animate-fade-in">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-slate-900">Pengaduan Berhasil Terkirim!</h3>
+                <p class="text-xs text-slate-600 mt-1">Laporan Anda telah tercatat pada database Kantor Kecamatan Binangun.</p>
+            </div>
+            
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <span class="text-xs text-slate-500 uppercase font-semibold">Nomor Tiket Laporan Anda:</span>
+                <div class="text-2xl font-black text-primary-800 tracking-wider my-1" id="modalTicketCode">BNG-202609-001</div>
+                <p class="text-[11px] text-amber-600">Simpan atau catat nomor tiket ini untuk memantau status perkembangan.</p>
+            </div>
+
+            <div class="flex gap-2">
+                <button onclick="copyTicketCode()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold py-2.5 rounded-lg transition">
+                    <i class="fa-solid fa-copy mr-1"></i> Salin Tiket
+                </button>
+                <button onclick="closeTicketModal()" class="flex-1 bg-primary-800 hover:bg-primary-900 text-white text-xs font-bold py-2.5 rounded-lg transition">
+                    Tutup & Lacak
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: PETUGAS KECAMATAN PORTAL -->
+    <div id="officerModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <!-- Modal Header -->
+            <div class="bg-primary-900 text-white px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-user-shield text-amber-400 text-xl"></i>
+                    <div>
+                        <h3 class="font-bold text-base">Portal Petugas Kantor Kecamatan Binangun</h3>
+                        <p class="text-xs text-slate-300">Manajemen & Pembaruan Status Pengaduan Warga</p>
+                    </div>
+                </div>
+                <button onclick="closeOfficerModal()" class="text-slate-300 hover:text-white text-xl font-bold px-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content (Table + Quick Reply) -->
+            <div class="p-6 overflow-y-auto space-y-6 flex-grow">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <div class="text-xs text-slate-600">
+                        Filter Berdasarkan Desa:
+                    </div>
+                    <select id="adminFilterVillage" onchange="renderAdminTable()" class="text-xs border border-slate-300 rounded-lg px-3 py-1.5 bg-white outline-none">
+                        <option value="ALL">-- Semua 17 Desa --</option>
+                    </select>
+                </div>
+
+                <!-- Table -->
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead class="bg-slate-100 text-slate-700 font-semibold border-b">
+                            <tr>
+                                <th class="p-3">Tiket & Tgl</th>
+                                <th class="p-3">Pelapor / NIK</th>
+                                <th class="p-3">Desa</th>
+                                <th class="p-3">Judul Pengaduan</th>
+                                <th class="p-3">Status Saat Ini</th>
+                                <th class="p-3 text-center">Aksi Petugas</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody" class="divide-y divide-slate-100">
+                            <!-- Injected JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bg-slate-100 px-6 py-3 border-t border-slate-200 text-right">
+                <button onclick="closeOfficerModal()" class="bg-slate-700 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded-lg">
+                    Selesai & Keluar Modal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <script>
+        // LIST OF ALL 17 VILLAGES IN KECAMATAN BINANGUN AS MANDATED
+        const BINANGUN_VILLAGES = [
+            "Alangamba",
+            "Bangkal",
+            "Binangun",
+            "Jati",
+            "Jepara Kulon",
+            "Jepara Wetan",
+            "Karangnangka",
+            "Kemojing",
+            "Kepudang",
+            "Pagubugan",
+            "Pagubugan Kulon",
+            "Pasuruhan",
+            "Pesawahan",
+            "Sidaurip",
+            "Sidayu",
+            "Widarapayung Kulon",
+            "Widarapayung Wetan"
+        ];
+
+        // INITIAL DUMMY COMPLAINTS DATA
+        let complaintsData = [
+            {
+                id: "BNG-202609-001",
+                nik: "3301121508920001",
+                name: "Ahmad Dahlan",
+                phone: "081234567890",
+                village: "Widarapayung Wetan",
+                category: "Infrastruktur & Jalan",
+                priority: "Sedang",
+                title: "Kerusakan Penerangan Lampu Jalan Jalur Wisata Pantai Widarapayung Wetan",
+                detail: "Beberapa titik penerangan jalan umum mati dari perbatasan jalur pantai menuju pemukiman warga RT 03/RW 02. Memohon tindakan perbaikan untuk kenyamanan penerangan malam.",
+                status: "Diproses",
+                date: "2026-09-20",
+                response: "Tim Teknis Kantor Kecamatan telah berkoordinasi dengan Dinas Perhubungan untuk pergantian bohlam & perbaikan kabel.",
+                officerDate: "2026-09-22"
+            },
+            {
+                id: "BNG-202609-002",
+                nik: "3301122204850003",
+                name: "Siti Rahmawati",
+                phone: "085712341111",
+                village: "Pagubugan Kulon",
+                category: "Kebersihan & Lingkungan",
+                priority: "Biasa",
+                title: "Penumpukan Sampah Musiman di Sempadan Saluran Irigasi Desa Pagubugan Kulon",
+                detail: "Terjadi tumpukan sampah plastik yang menyumbat aliran drainase menjelang musim hujan. Perlu penanganan gotong royong dan penyediaan tempat sampah.",
+                status: "Selesai",
+                date: "2026-09-18",
+                response: "Pihak Pemerintah Desa Pagubugan Kulon bersama warga telah membersihkan saluran air pada kegiatan kerja bakti tanggal 21 September.",
+                officerDate: "2026-09-21"
+            },
+            {
+                id: "BNG-202609-003",
+                nik: "3301120911950002",
+                name: "Kartono",
+                phone: "082199887766",
+                village: "Sidaurip",
+                category: "Bantuan Sosial & Ekonomi",
+                priority: "Sedang",
+                title: "Pendataan Ulang Penerima Bantuan Usaha Mikro di Desa Sidaurip",
+                detail: "Mohon penjelasan terkait jadwal verifikasi lapangan bagi calon penerima bantuan UMKM periode semester kedua.",
+                status: "Menunggu Verifikasi",
+                date: "2026-09-24",
+                response: "",
+                officerDate: ""
+            },
+            {
+                id: "BNG-202609-004",
+                nik: "3301120302900004",
+                name: "Tri Wahyuni",
+                phone: "081322114455",
+                village: "Jepara Wetan",
+                category: "Pelayanan Publik Desa",
+                priority: "Biasa",
+                title: "Permohonan Layanan Keliling Administrasi Kependudukan",
+                detail: "Mengusulkan agar Kantor Kecamatan mengadakan kembali program jemput bola perekaman KTP-el bagi lansia di Desa Jepara Wetan.",
+                status: "Diproses",
+                date: "2026-09-23",
+                response: "Jadwal pelayanan jemput bola Disdukcapil di Binangun direncanakan awal bulan depan.",
+                officerDate: "2026-09-25"
+            },
+            {
+                id: "BNG-202609-005",
+                nik: "3301121006880005",
+                name: "Bambang Sugeng",
+                phone: "085290001122",
+                village: "Alangamba",
+                category: "Keamanan & Ketertiban",
+                priority: "Darurat",
+                title: "Permohonan Pos Ronda & Patroli Malam Desa Alangamba",
+                detail: "Peningkatan aktivitas kecurigaan di perbatasan area persawahan malam hari. Memohon dukungan koordinasi Satpol PP Kecamatan.",
+                status: "Diproses",
+                date: "2026-09-25",
+                response: "Instruksi patroli Satpol PP telah diteruskan ke Polsek & Koramil Binangun.",
+                officerDate: "2026-09-25"
+            }
+        ];
+
+        let selectedFile = null;
+        let villageChartInstance = null;
+        let categoryChartInstance = null;
+
+        // INITIALIZATION ON PAGE LOAD
+        window.addEventListener('DOMContentLoaded', () => {
+            renderVillagesGrid();
+            renderPublicComplaintsFeed();
+            updateHeroStats();
+            initCharts();
+            populateAdminFilterDropdown();
+        });
+
+        // RENDER ALL 17 VILLAGES GRID
+        function renderVillagesGrid() {
+            const grid = document.getElementById('villagesGrid');
+            grid.innerHTML = '';
+
+            BINANGUN_VILLAGES.forEach((villageName, index) => {
+                // Calculate count for this village
+                const count = complaintsData.filter(c => c.village.toLowerCase() === villageName.toLowerCase()).length;
+                
+                const card = document.createElement('div');
+                card.className = "bg-slate-50 hover:bg-primary-50 hover:border-primary-300 border border-slate-200 rounded-xl p-3 text-center transition cursor-pointer group shadow-sm flex flex-col justify-between";
+                card.onclick = () => filterByVillageName(villageName);
+                
+                card.innerHTML = `
+                    <div>
+                        <div class="w-8 h-8 rounded-full bg-primary-100 group-hover:bg-primary-600 group-hover:text-white text-primary-700 flex items-center justify-center font-bold text-xs mx-auto mb-2 transition">
+                            ${index + 1}
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-xs group-hover:text-primary-900 line-clamp-1">${villageName}</h4>
+                    </div>
+                    <div class="mt-2 pt-2 border-t border-slate-200/60 flex justify-between items-center text-[10px] text-slate-500">
+                        <span>Pengaduan:</span>
+                        <span class="font-bold ${count > 0 ? 'text-primary-700' : 'text-slate-400'}">${count}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // FORM SUBMISSION HANDLER
+        function handleFormSubmit(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('reporterName').value.trim();
+            const nik = document.getElementById('reporterNik').value.trim();
+            const phone = document.getElementById('reporterPhone').value.trim();
+            const village = document.getElementById('reporterVillage').value;
+            const category = document.getElementById('complaintCategory').value;
+            const priority = document.getElementById('complaintPriority').value;
+            const title = document.getElementById('complaintTitle').value.trim();
+            const detail = document.getElementById('complaintDetail').value.trim();
+
+            if (!village) {
+                alertModal("Peringatan", "Silakan pilih Asal Desa di Kecamatan Binangun.");
+                return;
+            }
+
+            // Generate Ticket Code: BNG-YEARMONTH-XXX
+            const yearMonth = new Date().toISOString().slice(0, 7).replace('-', '');
+            const randomNum = String(complaintsData.length + 1).padStart(3, '0');
+            const newTicketId = `BNG-${yearMonth}-${randomNum}`;
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            const newComplaint = {
+                id: newTicketId,
+                nik: nik,
+                name: name,
+                phone: phone,
+                village: village,
+                category: category,
+                priority: priority,
+                title: title,
+                detail: detail,
+                status: "Menunggu Verifikasi",
+                date: todayStr,
+                response: "",
+                officerDate: ""
+            };
+
+            // Insert to array front
+            complaintsData.unshift(newComplaint);
+
+            // Update UI & Charts
+            renderPublicComplaintsFeed();
+            renderVillagesGrid();
+            updateHeroStats();
+            updateCharts();
+
+            // Reset Form
+            document.getElementById('complaintForm').reset();
+            document.getElementById('filePreview').classList.add('hidden');
+            selectedFile = null;
+
+            // Show Success Modal
+            document.getElementById('modalTicketCode').innerText = newTicketId;
+            document.getElementById('ticketSuccessModal').classList.remove('hidden');
+        }
+
+        // TRACK COMPLAINT SEARCH
+        function searchComplaint(event) {
+            if (event) event.preventDefault();
+            const query = document.getElementById('trackSearchInput').value.trim().toLowerCase();
+            const resultBox = document.getElementById('trackResultContainer');
+
+            if (!query) return;
+
+            const foundList = complaintsData.filter(item => 
+                item.id.toLowerCase() === query || item.nik.toLowerCase() === query
+            );
+
+            resultBox.classList.remove('hidden');
+
+            if (foundList.length === 0) {
+                resultBox.innerHTML = `
+                    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center text-amber-800 space-y-2">
+                        <i class="fa-solid fa-triangle-exclamation text-3xl text-amber-500"></i>
+                        <h4 class="font-bold text-base">Tiket / NIK Tidak Ditemukan</h4>
+                        <p class="text-xs">Pastikan nomor tiket (Contoh: BNG-202609-001) atau NIK yang Anda masukkan sudah benar.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Render search results cards
+            resultBox.innerHTML = foundList.map(item => renderComplaintDetailCard(item)).join('');
+        }
+
+        function trackSingleId(ticketId) {
+            document.getElementById('trackSearchInput').value = ticketId;
+            document.getElementById('lacak').scrollIntoView({ behavior: 'smooth' });
+            searchComplaint(null);
+        }
+
+        function renderComplaintDetailCard(item) {
+            // Determine badge style
+            let statusBadgeClass = "bg-amber-100 text-amber-800 border-amber-300";
+            let step1Class = "step-active", step2Class = "bg-slate-200 text-slate-500", step3Class = "bg-slate-200 text-slate-500", step4Class = "bg-slate-200 text-slate-500";
+
+            if (item.status === "Diproses") {
+                statusBadgeClass = "bg-blue-100 text-blue-800 border-blue-300";
+                step2Class = "step-active";
+                step3Class = "step-active";
+            } else if (item.status === "Selesai") {
+                statusBadgeClass = "bg-emerald-100 text-emerald-800 border-emerald-300";
+                step2Class = "step-active";
+                step3Class = "step-active";
+                step4Class = "step-active";
+            }
+
+            return `
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-md mb-4 space-y-5 animate-fade-in">
+                    <!-- Top Info Header -->
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-100 pb-3">
+                        <div>
+                            <span class="text-xs font-mono bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md font-bold">${item.id}</span>
+                            <span class="text-xs text-slate-400 ml-2">Tanggal: ${item.date}</span>
+                        </div>
+                        <span class="px-3 py-1 text-xs font-bold rounded-full border ${statusBadgeClass}">
+                            <i class="fa-solid fa-clock-rotate-left mr-1"></i> Status: ${item.status}
+                        </span>
+                    </div>
+
+                    <!-- Main Info -->
+                    <div>
+                        <div class="flex items-center gap-2 text-xs text-primary-700 font-semibold mb-1">
+                            <span class="bg-primary-50 px-2 py-0.5 rounded border border-primary-200">Desa ${item.village}</span>
+                            <span>&bull;</span>
+                            <span>${item.category}</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900">${item.title}</h3>
+                        <p class="text-xs text-slate-600 mt-2 bg-slate-50 p-3 rounded-xl border border-slate-100 leading-relaxed">${item.detail}</p>
+                    </div>
+
+                    <!-- Progress Status Tracker Timeline -->
+                    <div class="pt-2">
+                        <h4 class="text-xs font-bold text-slate-700 uppercase mb-3">Perkembangan Penanganan:</h4>
+                        <div class="grid grid-cols-4 gap-2 text-center text-[10px]">
+                            <div class="space-y-1">
+                                <div class="w-7 h-7 mx-auto rounded-full flex items-center justify-center font-bold ${step1Class}">1</div>
+                                <span class="font-semibold block text-slate-700">Terkirim</span>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="w-7 h-7 mx-auto rounded-full flex items-center justify-center font-bold ${step2Class}">2</div>
+                                <span class="font-semibold block text-slate-700">Verifikasi</span>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="w-7 h-7 mx-auto rounded-full flex items-center justify-center font-bold ${step3Class}">3</div>
+                                <span class="font-semibold block text-slate-700">Tindak Lanjut</span>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="w-7 h-7 mx-auto rounded-full flex items-center justify-center font-bold ${step4Class}">4</div>
+                                <span class="font-semibold block text-slate-700">Selesai</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Officer Response Box -->
+                    <div class="bg-primary-50/60 border border-primary-200 p-4 rounded-xl">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-xs font-bold text-primary-900 flex items-center gap-1.5">
+                                <i class="fa-solid fa-comment-dots text-primary-600"></i> Tanggapan Resmi Kantor Kecamatan Binangun
+                            </span>
+                            ${item.officerDate ? `<span class="text-[10px] text-slate-500">${item.officerDate}</span>` : ''}
+                        </div>
+                        <p class="text-xs text-slate-700 italic">
+                            ${item.response ? item.response : 'Belum ada catatan tanggapan resmi. Laporan Anda sedang dalam tahap antrean verifikasi petugas.'}
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // RENDER RECENT PUBLIC COMPLAINTS LIST
+        function renderPublicComplaintsFeed() {
+            const feedContainer = document.getElementById('publicComplaintsList');
+            feedContainer.innerHTML = '';
+
+            // Display top 5
+            const listToShow = complaintsData.slice(0, 5);
+
+            listToShow.forEach(item => {
+                let badgeClass = "bg-amber-100 text-amber-800 border-amber-200";
+                if (item.status === "Diproses") badgeClass = "bg-blue-100 text-blue-800 border-blue-200";
+                if (item.status === "Selesai") badgeClass = "bg-emerald-100 text-emerald-800 border-emerald-200";
+
+                const card = document.createElement('div');
+                card.className = "bg-white p-4 rounded-xl border border-slate-200 hover:shadow-md transition flex flex-col sm:flex-row sm:items-center justify-between gap-4";
+                card.innerHTML = `
+                    <div class="space-y-1 flex-grow">
+                        <div class="flex flex-wrap items-center gap-2 text-xs">
+                            <span class="font-mono bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[11px] font-semibold">${item.id}</span>
+                            <span class="bg-primary-100 text-primary-800 px-2.5 py-0.5 rounded-full font-medium text-[11px]">Desa ${item.village}</span>
+                            <span class="text-slate-400 text-[11px]">${item.date}</span>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm hover:text-primary-700 transition cursor-pointer" onclick="trackSingleId('${item.id}')">
+                            ${item.title}
+                        </h4>
+                        <p class="text-xs text-slate-500 line-clamp-1">${item.detail}</p>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                        <span class="text-xs px-3 py-1 rounded-full border font-semibold ${badgeClass}">
+                            ${item.status}
+                        </span>
+                        <button onclick="trackSingleId('${item.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-lg font-medium transition">
+                            Detail <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i>
+                        </button>
+                    </div>
+                `;
+                feedContainer.appendChild(card);
+            });
+        }
+
+        // UPDATE HERO STATS COUNTERS
+        function updateHeroStats() {
+            const total = complaintsData.length;
+            const pending = complaintsData.filter(c => c.status === "Menunggu Verifikasi" || c.status === "Diproses").length;
+            const done = complaintsData.filter(c => c.status === "Selesai").length;
+
+            document.getElementById('heroTotalCount').innerText = total;
+            document.getElementById('heroPendingCount').innerText = pending;
+            document.getElementById('heroDoneCount').innerText = done;
+        }
+
+        // INITIALIZE CHART.JS FOR STATISTIK
+        function initCharts() {
+            // Chart 1: Complaints per Village (17 Villages)
+            const villageCtx = document.getElementById('villageChart').getContext('2d');
+            
+            const villageLabels = BINANGUN_VILLAGES;
+            const villageCounts = villageLabels.map(v => 
+                complaintsData.filter(c => c.village.toLowerCase() === v.toLowerCase()).length
+            );
+
+            villageChartInstance = new Chart(villageCtx, {
+                type: 'bar',
+                data: {
+                    labels: villageLabels,
+                    datasets: [{
+                        label: 'Jumlah Pengaduan',
+                        data: villageCounts,
+                        backgroundColor: '#1d4ed8',
+                        borderRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                font: { size: 9 },
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Category Breakdown
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            const categories = [
+                "Infrastruktur & Jalan",
+                "Pelayanan Publik Desa",
+                "Kebersihan & Lingkungan",
+                "Bantuan Sosial & Ekonomi",
+                "Keamanan & Ketertiban",
+                "Lainnya"
+            ];
+
+            const categoryCounts = categories.map(cat => 
+                complaintsData.filter(c => c.category === cat).length
+            );
+
+            categoryChartInstance = new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: categoryCounts,
+                        backgroundColor: [
+                            '#1d4ed8',
+                            '#10b981',
+                            '#f59e0b',
+                            '#8b5cf6',
+                            '#ef4444',
+                            '#64748b'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { size: 10 } } }
+                    }
+                }
+            });
+
+            findTopActiveVillage();
+        }
+
+        function updateCharts() {
+            if (!villageChartInstance || !categoryChartInstance) return;
+
+            // Update village chart
+            const villageCounts = BINANGUN_VILLAGES.map(v => 
+                complaintsData.filter(c => c.village.toLowerCase() === v.toLowerCase()).length
+            );
+            villageChartInstance.data.datasets[0].data = villageCounts;
+            villageChartInstance.update();
+
+            // Update category chart
+            const categories = [
+                "Infrastruktur & Jalan",
+                "Pelayanan Publik Desa",
+                "Kebersihan & Lingkungan",
+                "Bantuan Sosial & Ekonomi",
+                "Keamanan & Ketertiban",
+                "Lainnya"
+            ];
+            const categoryCounts = categories.map(cat => 
+                complaintsData.filter(c => c.category === cat).length
+            );
+            categoryChartInstance.data.datasets[0].data = categoryCounts;
+            categoryChartInstance.update();
+
+            findTopActiveVillage();
+        }
+
+        function findTopActiveVillage() {
+            let maxCount = -1;
+            let topV = "Widarapayung Wetan";
+
+            BINANGUN_VILLAGES.forEach(v => {
+                const count = complaintsData.filter(c => c.village.toLowerCase() === v.toLowerCase()).length;
+                if (count > maxCount) {
+                    maxCount = count;
+                    topV = v;
+                }
+            });
+
+            document.getElementById('topActiveVillage').innerText = topV;
+        }
+
+        // OFFICER / ADMIN PORTAL LOGIC
+        function openOfficerModal() {
+            document.getElementById('officerModal').classList.remove('hidden');
+            renderAdminTable();
+        }
+
+        function closeOfficerModal() {
+            document.getElementById('officerModal').classList.add('hidden');
+        }
+
+        function populateAdminFilterDropdown() {
+            const select = document.getElementById('adminFilterVillage');
+            BINANGUN_VILLAGES.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v;
+                opt.innerText = `Desa ${v}`;
+                select.appendChild(opt);
+            });
+        }
+
+        function renderAdminTable() {
+            const filterVillage = document.getElementById('adminFilterVillage').value;
+            const tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = '';
+
+            let filtered = complaintsData;
+            if (filterVillage !== "ALL") {
+                filtered = complaintsData.filter(c => c.village.toLowerCase() === filterVillage.toLowerCase());
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="p-4 text-center text-slate-400">Tidak ada pengaduan terdaftar di wilayah desa ini.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filtered.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 border-b border-slate-100";
+                tr.innerHTML = `
+                    <td class="p-3 font-mono">
+                        <span class="font-bold text-primary-800">${item.id}</span>
+                        <span class="block text-[10px] text-slate-400">${item.date}</span>
+                    </td>
+                    <td class="p-3">
+                        <span class="font-semibold block text-slate-800">${item.name}</span>
+                        <span class="text-[10px] text-slate-400 font-mono">NIK: ${item.nik}</span>
+                    </td>
+                    <td class="p-3">
+                        <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px] font-semibold">
+                            ${item.village}
+                        </span>
+                    </td>
+                    <td class="p-3 max-w-xs">
+                        <span class="font-bold text-slate-800 block truncate">${item.title}</span>
+                        <span class="text-[10px] text-slate-500">${item.category}</span>
+                    </td>
+                    <td class="p-3">
+                        <select onchange="updateComplaintStatus('${item.id}', this.value)" class="text-xs border rounded px-2 py-1 bg-white font-semibold outline-none">
+                            <option value="Menunggu Verifikasi" ${item.status === 'Menunggu Verifikasi' ? 'selected' : ''}>Menunggu Verifikasi</option>
+                            <option value="Diproses" ${item.status === 'Diproses' ? 'selected' : ''}>Diproses</option>
+                            <option value="Selesai" ${item.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                        </select>
+                    </td>
+                    <td class="p-3 text-center">
+                        <button onclick="promptOfficerResponse('${item.id}')" class="bg-primary-100 hover:bg-primary-200 text-primary-800 text-[11px] font-bold px-3 py-1.5 rounded transition">
+                            <i class="fa-solid fa-reply mr-1"></i> Tanggapi
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateComplaintStatus(ticketId, newStatus) {
+            const item = complaintsData.find(c => c.id === ticketId);
+            if (item) {
+                item.status = newStatus;
+                item.officerDate = new Date().toISOString().split('T')[0];
+                renderPublicComplaintsFeed();
+                updateHeroStats();
+                updateCharts();
+            }
+        }
+
+        function promptOfficerResponse(ticketId) {
+            const item = complaintsData.find(c => c.id === ticketId);
+            if (!item) return;
+
+            const newResponse = prompt(`Tuliskan Tanggapan Resmi Petugas untuk Tiket ${item.id}:`, item.response || "");
+            if (newResponse !== null) {
+                item.response = newResponse.trim();
+                item.officerDate = new Date().toISOString().split('T')[0];
+                renderAdminTable();
+                renderPublicComplaintsFeed();
+                alertModal("Tanggapan Tersimpan", `Tanggapan resmi untuk tiket ${item.id} telah diperbarui.`);
+            }
+        }
+
+        // HELPER UTILITIES
+        function filterByVillageName(villageName) {
+            document.getElementById('buat-pengaduan').scrollIntoView({ behavior: 'smooth' });
+            const select = document.getElementById('reporterVillage');
+            select.value = villageName;
+        }
+
+        function previewFile(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('filePreview');
+            if (file) {
+                preview.innerText = `Terpilih: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                preview.classList.remove('hidden');
+            }
+        }
+
+        function closeTicketModal() {
+            document.getElementById('ticketSuccessModal').classList.add('hidden');
+            const code = document.getElementById('modalTicketCode').innerText;
+            trackSingleId(code);
+        }
+
+        function copyTicketCode() {
+            const code = document.getElementById('modalTicketCode').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                alertModal("Tersalin", `Kode tiket ${code} telah disalin ke clipboard.`);
+            }).catch(() => {
+                // Fallback copy
+                const tempInput = document.createElement("input");
+                tempInput.value = code;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempInput);
+                alertModal("Tersalin", `Kode tiket ${code} berhasil disalin.`);
+            });
+               }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function alertModal(title, text) {
+            // Simple alert dialog without browser alert()
+            const alertBox = document.createElement('div');
+            alertBox.className = "fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 animate-fade-in";
+            alertBox.innerHTML = `
+                <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center space-y-3 shadow-2xl">
+                    <div class="w-12 h-12 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center text-xl mx-auto">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-base">${title}</h4>
+                    <p class="text-xs text-slate-600">${text}</p>
+                    <button onclick="this.parentElement.parentElement.remove()" class="w-full bg-primary-800 text-white font-bold text-xs py-2 rounded-lg">
+                        Tutup
+                    </button>
+                    </div>
+            `;
+            document.body.appendChild(alertBox);
+        }
+    </script>
+</body>
+</html>
